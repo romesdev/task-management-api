@@ -7,26 +7,31 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use App\Traits\ResponseTrait;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
-    public function index()
+    /**
+     * Response trait to handle return responses.
+     */
+    use ResponseTrait;
+    public function index(): JsonResponse
     {
         try {
             $tasks = Task::all();
-            return response()->json($tasks);
-        } catch (Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred while fetching tasks',
-                'details' => $e->getMessage()
-            ], 500);
+            return $this->responseSuccess($tasks, 'Task list successfully');
+        } catch (\Exception $e) {
+            return $this->responseError($e, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         try {
-            $validated = $request->validate([
+            $validator = Validator::make($request->all(), [
                 'title' => 'required|string|min:3|max:255',
                 'description' => 'required|string|min:3|max:500',
                 'due_date' => 'required|date',
@@ -34,50 +39,39 @@ class TaskController extends Controller
                 'user_id' => 'required|exists:users,id',
             ]);
 
-            $task = Task::create($validated);
-            return response()->json($task, 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'error' => 'Validation failed',
-                'details' => $e->errors()
-            ], 422);
+            if ($validator->fails()) {
+                return $this->responseError($validator->errors(), 'Validation failed', Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $task = Task::create($validator->validated());
+            return $this->responseSuccess($task, 'New task created successfully', Response::HTTP_CREATED);
         } catch (Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred while creating the task',
-                'details' => $e->getMessage()
-            ], 500);
+            return $this->responseError($e, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function show($id)
+    public function show($id): JsonResponse
     {
         try {
             $task = Task::findOrFail($id);
-            return response()->json($task);
+            return $this->responseSuccess($task, 'Task found successfully');
         } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => 'Task not found',
-            ], 404);
+            return $this->responseError($e, 'Task not found', Response::HTTP_NOT_FOUND);
         } catch (Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred while fetching the task',
-                'details' => $e->getMessage()
-            ], 500);
+            return $this->responseError($e, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
         try {
             $task = Task::findOrFail($id);
         } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => 'Task not found',
-            ], 404);
+            return $this->responseError($e, 'Task not found', Response::HTTP_NOT_FOUND);
         }
 
         try {
-            $validated = $request->validate([
+            $validator = Validator::make($request->all(), [
                 'title' => 'sometimes|required|string|min:3|max:255',
                 'description' => 'sometimes|required|string|min:3|max:500',
                 'due_date' => 'sometimes|required|date',
@@ -85,39 +79,30 @@ class TaskController extends Controller
                 'user_id' => 'sometimes|required|exists:users,id',
             ]);
 
-            $task->update($validated);
-            return response()->json($task);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'error' => 'Validation failed',
-                'details' => $e->errors()
-            ], 422);
+            if ($validator->fails()) {
+                return $this->responseError($validator->errors(), 'Validation failed', Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $task->update($validator->validated());
+            return $this->responseSuccess($task, 'Task updated successfully', Response::HTTP_OK);
         } catch (Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred while updating the task',
-                'details' => $e->getMessage()
-            ], 500);
+            return $this->responseError($e, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         try {
             $task = Task::findOrFail($id);
         } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => 'Task not found',
-            ], 404);
+            return $this->responseError($e, 'Task not found', Response::HTTP_NOT_FOUND);
         }
 
         try {
             $task->delete();
-            return response()->json(['message' => 'Task deleted successfully']);
+            return $this->responseSuccess(null, 'Task deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (Exception $e) {
-            return response()->json([
-                'error' => 'An error occurred while deleting the task',
-                'details' => $e->getMessage()
-            ], 500);
+            return $this->responseError($e, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
