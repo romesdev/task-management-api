@@ -23,7 +23,7 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {
         if (!$request->expectsJson()) {
-            return $this->responseError(null, 'Un Authenticated Access', JsonResponse::HTTP_UNAUTHORIZED);
+            return null;  // No redirect; we want to return an error directly
         }
     }
 
@@ -39,7 +39,7 @@ class Authenticate extends Middleware
     protected function unauthenticated($request, array $guards)
     {
         throw new HttpResponseException(
-            $this->responseError(null,  'Un Authenticated Access', JsonResponse::HTTP_UNAUTHORIZED)
+            $this->responseError(null, 'Unauthenticated Access', JsonResponse::HTTP_UNAUTHORIZED)
         );
     }
 }
