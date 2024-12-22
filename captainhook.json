@@ -7,10 +7,10 @@
         "enabled": true,
         "actions": [
             {
-                "action": "./vendor/bin/pint"
+                "action":"\\CaptainHook\\App\\Hook\\PHP\\Action\\Linting"
             },
             {
-                "action": "vendor/bin/phpunit"
+                "action": "php artisan test"
             }
         ]
     }
