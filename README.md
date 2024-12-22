@@ -63,4 +63,13 @@ composer install
 php artisan key:generate
 ```
 
-7. Acesse a documentação do projeto em <http://localhost:8989/api/documentation>.
+7. Rode as migrations
+```
+php artisan migrate
+```
+
+8. Rode o seeder
+```
+php artisan db:seed
+```
+9. Acesse a documentação do projeto em <http://localhost:8989/api/documentation>.
