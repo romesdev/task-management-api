@@ -50,7 +50,7 @@ class AuthController extends Controller
       $success['token'] =  $user->createToken('api')->plainTextToken;
       $success['name'] =  $user->name;
 
-      return $this->responseSuccess($success, 'User register successfully.');
+      return $this->responseSuccess($success, 'User register successfully', Response::HTTP_CREATED);
     } catch (\Exception $e) {
       return $this->responseError($e, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
     }
@@ -88,7 +88,7 @@ class AuthController extends Controller
     try {
       if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
         $success['token'] = $request->user()->createToken('api')->plainTextToken;
-        return $this->responseSuccess($success, 'User login successfully' . Response::HTTP_OK);
+        return $this->responseSuccess($success, 'User login successfully', Response::HTTP_OK);
       }
 
       return $this->responseError(['error' => 'Unauthorised'], 'Unauthorised.', Response::HTTP_UNAUTHORIZED);
