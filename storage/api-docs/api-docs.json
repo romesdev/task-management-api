@@ -24,6 +24,7 @@
                                         "example": "john doe"
                                     },
                                     "email": {
+                                        "description": "O e-mail deve ser único",
                                         "type": "string",
                                         "example": "john@example.com"
                                     },
@@ -296,7 +297,7 @@
                                         "example": "Relatório deve ser entregue até sexta-feira"
                                     },
                                     "due_date": {
-                                        "description": "Data de vencimento da tarefa.",
+                                        "description": "Data de vencimento da tarefa. Use a data atual ou futura.",
                                         "type": "string",
                                         "format": "date",
                                         "example": "2024-12-31"

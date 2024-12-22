@@ -114,9 +114,11 @@ class TaskController extends Controller
       $validator = Validator::make($request->all(), [
         'title' => 'required|string|min:3|max:255',
         'description' => 'required|string|min:3|max:500',
-        'due_date' => 'required|date',
+        'due_date' => 'required|date|after_or_equal:today',
         'status' => 'required|in:pending,in_progress,completed',
         'user_id' => 'required|exists:users,id',
+      ], [
+        'due_date.after_or_equal' => 'A data de vencimento deve ser uma data futura ou igual a hoje.',
       ]);
 
       if ($validator->fails()) {
@@ -190,7 +192,7 @@ class TaskController extends Controller
    *              type="object",
    *              @OA\Property(property="title", type="string", example="Finalizar relatório", description="Título da tarefa."),
    *              @OA\Property(property="description", type="string", example="Relatório deve ser entregue até sexta-feira", description="Descrição da tarefa."),
-   *              @OA\Property(property="due_date", type="string", format="date", example="2024-12-31", description="Data de vencimento da tarefa."),
+   *              @OA\Property(property="due_date", type="string", format="date", example="2024-12-31", description="Data de vencimento da tarefa. Use a data atual ou futura."),
    *              @OA\Property(property="status", type="string", enum={"pending", "in_progress", "completed"}, example="pending", description="Status da tarefa (pending, in_progress, completed)."),
    *              @OA\Property(property="user_id", type="integer", example=10, description="ID do usuário associado à tarefa.")
    *         ),
@@ -232,9 +234,11 @@ class TaskController extends Controller
       $validator = Validator::make($request->all(), [
         'title' => 'sometimes|required|string|min:3|max:255',
         'description' => 'sometimes|required|string|min:3|max:500',
-        'due_date' => 'sometimes|required|date',
+        'due_date' => 'sometimes|required|date|after_or_equal:today',
         'status' => 'sometimes|required|in:pending,in_progress,completed',
         'user_id' => 'sometimes|required|exists:users,id',
+      ], [
+        'due_date.after_or_equal' => 'A data de vencimento deve ser uma data futura ou igual a hoje.',
       ]);
 
       if ($validator->fails()) {

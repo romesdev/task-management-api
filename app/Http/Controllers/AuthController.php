@@ -23,7 +23,7 @@ class AuthController extends Controller
    *          @OA\JsonContent(
    *              type="object",
    *              @OA\Property(property="name", type="string", example="john doe"),
-   *              @OA\Property(property="email", type="string", example="john@example.com"),
+   *              @OA\Property(property="email", type="string", example="john@example.com", description="O e-mail deve ser único"),
    *              @OA\Property(property="password", type="string", example="123456")
    *          ),
    *      ),
@@ -35,7 +35,7 @@ class AuthController extends Controller
   {
     $validator = Validator::make($request->all(), [
       'name' => 'required',
-      'email' => 'required|email',
+      'email' => 'required|email|unique:users,email',
       'password' => 'required',
     ]);
 
