@@ -10,7 +10,8 @@ services:
             - ./:/var/www
         networks:
             - laravel
-
+        depends_on:
+            - db
     # nginx
     nginx:
         image: nginx:alpine
