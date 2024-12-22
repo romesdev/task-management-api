@@ -62,7 +62,7 @@
                                 "properties": {
                                     "email": {
                                         "type": "string",
-                                        "example": "admin@example.com"
+                                        "example": "john@example.com"
                                     },
                                     "password": {
                                         "type": "string",
