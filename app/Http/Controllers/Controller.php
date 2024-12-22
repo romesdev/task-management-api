@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
  *     version="1.0.0",
  *     description="API para gerenciar tarefas."
  * )
+ *
  * @OA\SecurityScheme(
  *     type="http",
  *     securityScheme="bearerAuth",

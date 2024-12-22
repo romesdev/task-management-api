@@ -105,14 +105,14 @@ class TaskControllerTest extends TestCase
         // Verifica a estrutura do JSON de erro retornado
         $response->assertJsonStructure([
             'status',
-            "message",
+            'message',
             'errors' => [
                 'title',
                 'description',
                 'due_date',
                 'status',
             ],
-            "data"
+            'data',
         ]);
 
         // Verifica mensagens específicas de erro
@@ -123,7 +123,6 @@ class TaskControllerTest extends TestCase
         // Verifica que não foram criadas novas tarefas no banco
         $this->assertDatabaseCount('tasks', 0);
     }
-
 
     /**
      * Testa a atualização de uma tarefa existente.
