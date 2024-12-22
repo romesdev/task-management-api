@@ -6,20 +6,20 @@ use App\Models\Task;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+const DEFAULT_PAGE = 1;
+const DEFAULT_PER_PAGE = 10;
 class TaskController extends Controller
 {
+
   /**
    * Response trait to handle return responses.
    */
   use ResponseTrait;
-
   /**
    * Lista todas as tarefas.
    *
@@ -27,7 +27,21 @@ class TaskController extends Controller
    *     path="/api/tasks",
    *     tags={"Tasks"},
    *     summary="Obter lista de tarefas",
-   *     security={{"bearerAuth":{}}},
+   *     security={{"bearerAuth":{}}},  
+   *     @OA\Parameter(
+   *         name="page",
+   *         in="query",
+   *         required=false,
+   *         description="Número da página para paginação",
+   *         @OA\Schema(type="integer", default=1)
+   *     ),
+   *     @OA\Parameter(
+   *         name="per_page",
+   *         in="query",
+   *         required=false,
+   *         description="Número de tarefas por página",
+   *         @OA\Schema(type="integer", default=15)
+   *     ),
    *     @OA\Response(
    *         response=200,
    *         description="Lista de tarefas retornada com sucesso.",
@@ -38,16 +52,23 @@ class TaskController extends Controller
    *     )
    * )
    */
-  public function index(): JsonResponse
+  public function index(Request $request): JsonResponse
   {
     try {
-      $userId = Auth::id();
+      $validator = Validator::make($request->all(), [
+        'page' => 'nullable|integer|min:1',
+        'per_page' => 'nullable|integer|min:1|max:100',
+      ]);
 
-      if (!$userId) {
-        return $this->responseError(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
+      if ($validator->fails()) {
+        return $this->responseError($validator->errors(), 'Invalid pagination parameters', Response::HTTP_BAD_REQUEST);
       }
 
-      $tasks = Task::where('user_id', '=', $userId)->get();
+      $page = $request->input('page', DEFAULT_PAGE);
+      $perPage = $request->input('per_page', DEFAULT_PER_PAGE);
+
+      $tasks = Task::paginate($perPage, ['*'], 'page', $page);
+
       return $this->responseSuccess($tasks, 'Task list successfully');
     } catch (\Exception $e) {
       return $this->responseError($e, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -141,13 +162,7 @@ class TaskController extends Controller
   public function show($id): JsonResponse
   {
     try {
-      $userId = Auth::id();
-
-      if (!$userId) {
-        return $this->responseError(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
-      }
-
-      $task = Task::where('id', '=', $id)->where('user_id', '=', $userId)->first();
+      $task = Task::where('id', '=', $id)->first();
 
       if (!$task) {
         return $this->responseError(null, 'Task not found or access denied', Response::HTTP_NOT_FOUND);

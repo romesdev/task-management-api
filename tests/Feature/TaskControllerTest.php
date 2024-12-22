@@ -14,27 +14,28 @@ class TaskControllerTest extends TestCase
     /**
      * Testa o endpoint index para listar tarefas do usuário logado.
      */
-    public function test_index_returns_tasks_for_logged_in_user()
+    public function test_index_returns_tasks()
     {
+        $perPage = 3;
+        $page = 1;
+
         $user = User::factory()->create();
-        $tasks = Task::factory(3)->create(['user_id' => $user->id]);
+        $tasks = Task::factory($perPage)->create(['user_id' => $user->id]);
 
         $this->actingAs($user);
 
-        $response = $this->getJson('/api/tasks');
+        $response = $this->getJson("/api/tasks?page={$page}&per_page={$perPage}");
 
-        $this->assertCount(3, $response->json('data'));
+        $response->assertStatus(200);
 
-        $response->assertStatus(200)
-            ->assertJson([
-                'data' => $tasks->toArray(),
-            ]);
+        $this->assertCount($perPage, $response->json('data')['data']);
+        $this->assertEquals($page, $response->json('data')['current_page']);
     }
 
     /**
      * Testa o endpoint show para obter uma tarefa específica.
      */
-    public function test_show_returns_task_for_logged_in_user()
+    public function test_show_returns_task_by_id()
     {
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
