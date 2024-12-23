@@ -1,6 +1,41 @@
 Task management API
 
+
+Conforme solicitado no [arquivo com descrição do desafio](https://github.com/romesdev/task-management-api/blob/main/Backend%20developer%20test.pdf), implementei uma API para gerenciamento de tarefas. 
+
+## Tecnologias
+
+- PHP 8.3
+- Laravel 11
+- MySQL 
+- Eloquent ORM
+- PHPunit (testes)
+- Docker
+- Laravel Pint (code style)
+- Swagger
+- GitHub Actions
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+
+Optei pelo Laravel por apresentar ser o framework mais consolidado do ecossistema PHP e pela minha experiência prévia também. Também cogitei utilizar o Symfony que também já utilizei. 
+
+
+## Descrição geral
+
+Para esse desafio procurei apresentar uma API com autenticação, registro de usuários, um CRUD completo de tarefas, listagem paginada, validações para as entradas do usuários (por exemplo, campos obrigatórios e formatação específica para os valores informados - data, status e email) e regras de modificações nos recursos (como: deleção de uma tarefa só possível se feita pelo criador da tarefa, as demais ações são permitidas).
+
+Usualmente, busco utilizar uma estrutura de organização da solução com `middlewares --> controllers --> services/clients --> repositories`, aplicando boas práticas como injeção de dependências (principalmente, para fácil modificação de componentes/tecnologias e nos testes) e usando validações nas camadas de entrada como middlewares e controllers. Porém, nessa implementação, aproveitei da estrutura montada do Laravel e a forma como ele resolver as dependências e classes (inclusive, a forma como ele facilita testar os componentes da aplicação). 
+
+Ainda nessa implementação, tentei apresentar conceitos e práticas que gosto de utilizar no meu dia a dia de trabalho. 
+
+- `Docker` para facilitar configuração do ambiente e fácil compartilhamento da implementação. 
+- Testes escritos com `PHPUnit`.
+- `Pipelines de CI/CD` para validação, checagem de qualidade e entregas rápidas de software. Está inclusa no projeto um script `yaml` de testes para rodar a cada `push` e a cada `pull request aberta`. Validando assim as mudanças através dos testes. Na aba de `pull requests`, tem uma PR aberta para mostrar a checagem nas PRs.
+- Validação da entrada do usuário antes de escrever em bancos ou em APIs.
+- Uso de `pre-commit `com `captainhook` para garantir que cada commit seja de qualidade e que mantenha a aplicação no ar. Os commits tem `steps/actions` de formatação do código conforme o estilo e regras definidas pela equipe e testes sendo rodados para não subir modificações com erros. 
+- Incluí ainda um template de `pull request` que está também incluso na pasta `.github` (no arquivo `PULL_REQUEST_TEMPLATE.md`que irá servir para tudo relacionado ao GitHub). E podemos utilizar um template único para facilitar para toda a equipe o entendimento a cerca das mudanças. 
+- Documentação com `Swagger`.
+- Tradução/Internacionalização/`i18n`.
 
 ## Passo a passo
 
@@ -45,13 +80,13 @@ L5_SWAGGER_CONST_HOST=http://project.test/api/v1
 docker-compose up -d
 ```
 
-4. Acesse a linha do comando do container
+4. Acesse a linha de comando do container
 
 ```
 docker-compose exec app bash
 ```
 
-5. Instale as depedências do projeto
+5. Instale as dependências do projeto
 
 ```
 composer install
@@ -116,6 +151,9 @@ Repare que a data de vencimento deve ser uma data igual a hoje ou futura. A noss
 ![alt text](docs/images/input-delete.png)
 Ao final obtemos sucesso com o status code 204.
 ![alt text](docs/images/delete-response.png) 
+
+Só o criador da tarefa pode deletar a tarefa.
+![alt text](docs/imagegs/not-deleted.png)
 
 ## OBS: A nossa aplicação tem validação para todos os campos e com tradução. 
 
