@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 const DEFAULT_PAGE = 1;
@@ -44,7 +45,7 @@ class TaskController extends Controller
      *         required=false,
      *         description="Número de tarefas por página",
      *
-     *         @OA\Schema(type="integer", default=15)
+     *         @OA\Schema(type="integer", default=10)
      *     ),
      *
      *     @OA\Response(
@@ -120,12 +121,15 @@ class TaskController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
+            $request['created_by'] = Auth::id();
+
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|min:3|max:255',
                 'description' => 'required|string|min:3|max:500',
                 'due_date' => 'required|date|after_or_equal:today',
                 'status' => 'required|in:pending,in_progress,completed',
                 'user_id' => 'required|exists:users,id',
+                'created_by' => 'required|exists:users,id',
             ], [
                 'due_date.after_or_equal' => 'A data de vencimento deve ser uma data futura ou igual a hoje.',
             ]);
@@ -307,12 +311,15 @@ class TaskController extends Controller
     public function destroy($id): JsonResponse
     {
         try {
-            $task = Task::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            return $this->responseError($e, 'Task not found', Response::HTTP_NOT_FOUND);
-        }
 
-        try {
+            $userId = Auth::id();
+
+            $task = Task::where('id', '=', $id)->where('created_by', '=', $userId)->first();
+
+            if (!$task) {
+                return $this->responseError(null, 'Task not found or access denied (just could can deleted by creator)', Response::HTTP_NOT_FOUND);
+            }
+
             $task->delete();
 
             return $this->responseSuccess(null, 'Task deleted successfully', Response::HTTP_NO_CONTENT);

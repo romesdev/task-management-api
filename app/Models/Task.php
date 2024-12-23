@@ -16,10 +16,16 @@ class Task extends Model
         'due_date',
         'status',
         'user_id',
+        'created_by',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

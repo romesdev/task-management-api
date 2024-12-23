@@ -23,6 +23,7 @@ class TaskFactory extends Factory
             'due_date' => $this->faker->dateTimeBetween('now', '+1 year')->format('Y-m-d'),
             'status' => $this->faker->randomElement(['pending', 'in_progress', 'completed']),
             'user_id' => User::all()->random()->id,
+            'created_by' => User::all()->random()->id,
         ];
     }
 }
