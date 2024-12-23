@@ -153,7 +153,7 @@ Ao final obtemos sucesso com o status code 204.
 ![alt text](docs/images/delete-response.png) 
 
 Só o criador da tarefa pode deletar a tarefa.
-![alt text](docs/imagegs/not-deleted.png)
+![alt text](docs/images/not-deleted.png)
 
 ## OBS: A nossa aplicação tem validação para todos os campos e com tradução. 
 
