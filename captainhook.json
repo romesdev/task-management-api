@@ -1,0 +1,16 @@
+{
+    "pre-commit": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "php artisan test",
+                "options": {
+                    "working-directory": "."
+                }
+            },
+            {
+                "action": "\\CaptainHook\\App\\Hook\\PHP\\Action\\Linting"
+            }
+        ]
+    }
+}
