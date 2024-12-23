@@ -19,12 +19,12 @@ Conforme solicitado no [arquivo com descrição do desafio](https://github.com/r
 
 Optei pelo Laravel por apresentar ser o framework mais consolidado do ecossistema PHP e pela minha experiência prévia também. Também cogitei utilizar o Symfony que também já utilizei. 
 
-
 ## Descrição geral
 
-Para esse desafio procurei apresentar uma API com autenticação, registro de usuários, um CRUD completo de tarefas, listagem paginada, validações para as entradas do usuários (por exemplo, campos obrigatórios e formatação específica para os valores informados - data, status e email) e regras de modificações nos recursos (como: deleção de uma tarefa só possível se feita pelo criador da tarefa, as demais ações são permitidas).
+Para esse desafio procurei apresentar uma API com autenticação, registro de usuários, um CRUD completo de tarefas, listagem paginada, validações para as entradas do usuários (por exemplo, campos obrigatórios e formatação específica para os valores informados: data, status e email), regras de modificações nos recursos (como: deleção de uma tarefa só possível se feita pelo criador da tarefa, as demais ações são permitidas) e padronização de responses (configurados em Traits).
 
-Usualmente, busco utilizar uma estrutura de organização da solução com `middlewares --> controllers --> services/clients --> repositories`, aplicando boas práticas como injeção de dependências (principalmente, para fácil modificação de componentes/tecnologias e nos testes) e usando validações nas camadas de entrada como middlewares e controllers. Porém, nessa implementação, aproveitei da estrutura montada do Laravel e a forma como ele resolver as dependências e classes (inclusive, a forma como ele facilita testar os componentes da aplicação). 
+Usualmente, busco utilizar uma estrutura de organização da solução com `middlewares --> controllers --> services/clients --> repositories`, aplicando boas práticas como injeção de dependências (principalmente, para fácil modificação de componentes/tecnologias e nos testes) e usando validações nas camadas de entrada como middlewares e controllers. Porém, nessa implementação, aproveitei da estrutura montada do Laravel e a forma como ele resolve as dependências e classes (inclusive, a forma como ele facilita testar os componentes da aplicação). 
+
 
 Ainda nessa implementação, tentei apresentar conceitos e práticas que gosto de utilizar no meu dia a dia de trabalho. 
 
